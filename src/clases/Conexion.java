@@ -49,11 +49,18 @@ public class Conexion {
     
       public boolean actualizarValores(String updateQuery) throws SQLException {
 
-        try (Statement statement = conexion.createStatement()) {
-            int rowsUpdated = statement.executeUpdate(updateQuery);
+        
+            int rowsUpdated = sentencia.executeUpdate(updateQuery);
             return rowsUpdated > 0; // Devuelve true si se ha actualizado al menos una fila, false en caso contrario.
-        }
+       
     }
+      
+      public boolean insertarRegistro(String insertQuery) throws SQLException {
+
+        int rowsInserted = sentencia.executeUpdate(insertQuery);
+        return rowsInserted > 0; // Devuelve true si se ha insertado al menos una fila, false en caso contrario.
+    
+}
       
     public boolean eliminarRegistros(String deleteQuery) throws SQLException {
 

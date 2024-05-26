@@ -29,6 +29,7 @@ public class Ventana extends javax.swing.JFrame {
         cargarTabla();
         jButtonAceptarIdioma.setEnabled(false);
         jButtonCancelarIdioma.setEnabled(false);
+        //JtableTabla.setDefaultRenderer(columnClass, renderer); cambiar el color de la tabla
     }
 
     
@@ -620,7 +621,15 @@ public class Ventana extends javax.swing.JFrame {
             jTextFieldTextoLenguaje.setEnabled(true);
             jCheckBoxIsOficial.setEnabled(true);
             jTextFieldPercent.setEnabled(true);
-        }
+        } else {
+         
+            jButtonAceptarIdioma.setEnabled(true);
+            jButtonCancelarIdioma.setEnabled(true);
+            jTextFieldTextoLenguaje.setEnabled(true);
+            jCheckBoxIsOficial.setEnabled(true);
+            jTextFieldPercent.setEnabled(true);
+         
+         }
 //Al pulsar a añadir
         
         
@@ -659,12 +668,18 @@ public class Ventana extends javax.swing.JFrame {
     }
     
     private void jButtonAceptarIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAceptarIdiomaActionPerformed
+        
+                
+        //Seteamos los valores de los textos que hay en pantala justo debajo de la tabla
+        
+        String nuevoIdioma =  jTextFieldTextoLenguaje.getText();
+        String esOficial = jCheckBoxIsOficial.isSelected() ? "T" : "F";
+        String aPercent = jTextFieldPercent.getText();
+        
+         if (jTableIdiomas.getSelectedRow() != -1) {
         try {
                 //al confirmar el update
                 String idiomaAntesDeUpdate= (String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0);
-                String nuevoIdioma =  jTextFieldTextoLenguaje.getText();
-                String esOficial = jCheckBoxIsOficial.isSelected() ? "T" : "F";
-                String aPercent = jTextFieldPercent.getText();
                 String updateQuery = "UPDATE countrylanguage SET Language = '" + nuevoIdioma + "', isOfficial = '" + esOficial + "', Percentage = " + aPercent + " WHERE Language = '" + idiomaAntesDeUpdate + "' and countrycode = '"+idPaisSelected+"'";
                
         System.out.println(updateQuery);
@@ -684,7 +699,28 @@ public class Ventana extends javax.swing.JFrame {
         jTextFieldTextoLenguaje.setEnabled(false);
         jCheckBoxIsOficial.setEnabled(false);
         jTextFieldPercent.setEnabled(false);
-        //cargarEnPantallaDatosIdioma();
+         }else{
+         
+            try {
+                Mysql.insertarRegistro("INSERT INTO countrylanguage (CountryCode, Language, IsOfficial, Percentage) " + "VALUES ('" + idPaisSelected + "', '" + nuevoIdioma + "', '" + esOficial + "', " + aPercent + ")");
+            } catch (SQLException ex) {
+                Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+            }
+             
+            //cargarTablaLenguas(idPaisSelected);
+        
+            jTextFieldTextoLenguaje.setText("");
+            jCheckBoxIsOficial.setSelected(false);
+            jTextFieldPercent.setText("");
+
+            //Poenemos el edit del idioma a false
+            jButtonAceptarIdioma.setEnabled(false);
+            jButtonCancelarIdioma.setEnabled(false);
+            jTextFieldTextoLenguaje.setEnabled(false);
+            jCheckBoxIsOficial.setEnabled(false);
+            jTextFieldPercent.setEnabled(false);
+         
+         }
     }//GEN-LAST:event_jButtonAceptarIdiomaActionPerformed
 
     private void jButtonAñadirPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirPaisActionPerformed
@@ -765,8 +801,9 @@ public class Ventana extends javax.swing.JFrame {
             System.out.println(consulta + consulta2);
          
            try {
-               Mysql.actualizarValores(consulta);
-               Mysql.actualizarValores(consulta2);
+               System.out.println(Mysql.insertarRegistro(consulta));
+               System.out.println(Mysql.insertarRegistro(consulta2));
+               cargarTabla();
            } catch (SQLException ex) {
                Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
            }
@@ -898,7 +935,7 @@ public class Ventana extends javax.swing.JFrame {
 
         System.out.println(numLenguas);
 
-        String[][] paisData = new String[numLenguas][3];
+        String[][] paisData = new String[numLenguas][4];
         String[] columnNames = {"LENGUA", "OFICIAL", "%"}; 
 
         for (int i = 0; i < numLenguas; i++) {
