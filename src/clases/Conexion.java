@@ -54,6 +54,14 @@ public class Conexion {
             return rowsUpdated > 0; // Devuelve true si se ha actualizado al menos una fila, false en caso contrario.
         }
     }
+      
+    public boolean eliminarRegistros(String deleteQuery) throws SQLException {
+
+    try (Statement statement = conexion.createStatement()) {
+        int rowsDeleted = statement.executeUpdate(deleteQuery);
+        return rowsDeleted > 0; // Devuelve true si se ha eliminado al menos una fila, false en caso contrario.
+    }
+}
     
     
     public ResultSet getResultSet() {

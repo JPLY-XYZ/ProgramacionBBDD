@@ -83,8 +83,8 @@ public class Ventana extends javax.swing.JFrame {
         jCheckBoxIsOficial = new javax.swing.JCheckBox();
         jTextFieldPercent = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        jButtonAñadirPais = new javax.swing.JButton();
+        jButtonModifi = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
@@ -214,6 +214,11 @@ public class Ventana extends javax.swing.JFrame {
         });
 
         jButtonEliminarIdioma.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/menos.png"))); // NOI18N
+        jButtonEliminarIdioma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminarIdiomaActionPerformed(evt);
+            }
+        });
 
         jButtonAceptarIdioma.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/comprobado.png"))); // NOI18N
         jButtonAceptarIdioma.addActionListener(new java.awt.event.ActionListener() {
@@ -238,9 +243,14 @@ public class Ventana extends javax.swing.JFrame {
 
         jLabel20.setText("%:");
 
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/anadir.png"))); // NOI18N
+        jButtonAñadirPais.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/anadir.png"))); // NOI18N
+        jButtonAñadirPais.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAñadirPaisActionPerformed(evt);
+            }
+        });
 
-        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/contrato.png"))); // NOI18N
+        jButtonModifi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/contrato.png"))); // NOI18N
 
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/hoja-de-papel.png"))); // NOI18N
 
@@ -354,9 +364,9 @@ public class Ventana extends javax.swing.JFrame {
                                     .addComponent(jButtonCancelarIdioma, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                         .addGap(54, 54, 54))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton5)
+                        .addComponent(jButtonAñadirPais)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton6)
+                        .addComponent(jButtonModifi)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton7)
                         .addGap(12, 12, 12)
@@ -374,8 +384,8 @@ public class Ventana extends javax.swing.JFrame {
                     .addComponent(jButton8)
                     .addComponent(jButton9, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton5)
-                        .addComponent(jButton6)))
+                        .addComponent(jButtonAñadirPais)
+                        .addComponent(jButtonModifi)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -487,7 +497,19 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextCodigoActionPerformed
 
     private void jButtonCancelarIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarIdiomaActionPerformed
-        // TODO add your handling code here:
+        // Cancelando accion de seleccion de una en la tabla
+        jTextFieldTextoLenguaje.setText("");
+        jCheckBoxIsOficial.setSelected(false);
+        jTextFieldPercent.setText("");
+      
+        //Poenemos el edit del idioma a false
+        jButtonAceptarIdioma.setEnabled(false);
+        jButtonCancelarIdioma.setEnabled(false);
+        jTextFieldTextoLenguaje.setEnabled(false);
+        jCheckBoxIsOficial.setEnabled(false);
+        jTextFieldPercent.setEnabled(false);
+        cargarTablaLenguas(idPaisSelected);
+        
     }//GEN-LAST:event_jButtonCancelarIdiomaActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
@@ -625,6 +647,24 @@ public class Ventana extends javax.swing.JFrame {
         jTextFieldPercent.setEnabled(false);
         //cargarEnPantallaDatosIdioma();
     }//GEN-LAST:event_jButtonAceptarIdiomaActionPerformed
+
+    private void jButtonAñadirPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirPaisActionPerformed
+        // Añadir cosas
+    }//GEN-LAST:event_jButtonAñadirPaisActionPerformed
+
+    private void jButtonEliminarIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarIdiomaActionPerformed
+        // Eliminar un idioma de la base de datos
+        if (jTableIdiomas.getSelectedRow() != -1) {
+        String deleteQuery ="DELETE FROM countrylanguage WHERE Language = '" + (String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0) + "' and countrycode = '"+idPaisSelected+"'";
+
+        try {
+                System.out.println(Mysql.eliminarRegistros(deleteQuery) + deleteQuery);
+                cargarTablaLenguas(idPaisSelected);
+            } catch (SQLException ex) {
+                Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jButtonEliminarIdiomaActionPerformed
 
     public void cargarContinentes(){
     
@@ -768,15 +808,15 @@ public class Ventana extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable JtableTabla;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JButton jButtonAceptarIdioma;
     private javax.swing.JButton jButtonAñadirIdioma;
+    private javax.swing.JButton jButtonAñadirPais;
     private javax.swing.JButton jButtonCancelarIdioma;
     private javax.swing.JButton jButtonEliminarIdioma;
+    private javax.swing.JButton jButtonModifi;
     private javax.swing.JCheckBox jCheckBoxIsOficial;
     private javax.swing.JComboBox<String> jComboContinente;
     private javax.swing.JLabel jLabel1;
