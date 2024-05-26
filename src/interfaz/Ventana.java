@@ -86,7 +86,7 @@ public class Ventana extends javax.swing.JFrame {
         jTextFieldPercent = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
         jButtonAñadirPais = new javax.swing.JButton();
-        jButtonModifi = new javax.swing.JButton();
+        jButtonModificarPais = new javax.swing.JButton();
         jButtonEliminarPais = new javax.swing.JButton();
         jButtonGuardarPais = new javax.swing.JButton();
         jButtonCancelarPais = new javax.swing.JButton();
@@ -268,10 +268,11 @@ public class Ventana extends javax.swing.JFrame {
             }
         });
 
-        jButtonModifi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/contrato.png"))); // NOI18N
-        jButtonModifi.addActionListener(new java.awt.event.ActionListener() {
+        jButtonModificarPais.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/contrato.png"))); // NOI18N
+        jButtonModificarPais.setEnabled(false);
+        jButtonModificarPais.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonModifiActionPerformed(evt);
+                jButtonModificarPaisActionPerformed(evt);
             }
         });
 
@@ -401,7 +402,7 @@ public class Ventana extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonAñadirPais)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonModifi)
+                        .addComponent(jButtonModificarPais)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonEliminarPais)
                         .addGap(12, 12, 12)
@@ -420,7 +421,7 @@ public class Ventana extends javax.swing.JFrame {
                     .addComponent(jButtonCancelarPais, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButtonAñadirPais)
-                        .addComponent(jButtonModifi)))
+                        .addComponent(jButtonModificarPais)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -528,12 +529,11 @@ public class Ventana extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonCancelarIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarIdiomaActionPerformed
-        // Cancelando accion de seleccion de una en la tabla
+        //ponemos en blanco los datos del formulario de idioma
         jTextFieldTextoLenguaje.setText("");
         jCheckBoxIsOficial.setSelected(false);
         jTextFieldPercent.setText("");
-      
-        //Poenemos el edit del idioma a false
+        //Poenemos el edit del formulario de idioma a que no pueda editarse
         jButtonAceptarIdioma.setEnabled(false);
         jButtonCancelarIdioma.setEnabled(false);
         jTextFieldTextoLenguaje.setEnabled(false);
@@ -549,14 +549,21 @@ public class Ventana extends javax.swing.JFrame {
 
     private void JtableTablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableTablaMouseClicked
         // Al pulsar sobre uno de la tabla
- 
+
+        //Se activa la modificacion del pais
+        jButtonModificarPais.setEnabled(true);
+        
+        //Se inserta el valor de codigo del pais en la variable global isSelected para posteriormente
         idPaisSelected = JtableTabla.getModel().getValueAt(JtableTabla.getSelectedRow(),0);
         
+        //Se ejecuta una consulta la cual devuelve todos los datos necesarios para cargar la consulta actual en el formulario.
         Mysql.ejecutarConsulta("SELECT country.Code, country.Name, country.Continent, country.Region, country.LocalName, country.IndepYear, country.SurfaceArea FROM country WHERE Code = '" + JtableTabla.getModel().getValueAt(JtableTabla.getSelectedRow(),0)+"'");
-        
+        //Se guarda el resultado de la consulta en un resultset
         ResultSet datos = Mysql.getResultSet();
             try { 
+                //Se cargan los continentes disponibles en la base de datos en el combobox 
                 cargarContinentes();
+                //Empezamos a cargar los valores que se encuentran en orden en el formulario
                 datos.next();
                 jTextCodigo.setText(datos.getString(1));
                 jTextNombre.setText(datos.getString(2));
@@ -570,12 +577,12 @@ public class Ventana extends javax.swing.JFrame {
                 System.out.println(ex);
             }   
        
-            
+         //Se ejecuta una consulta la cual devuelve todos los datos necesarios para cargar la consulta actual en el formulario de la izquierda   
         Mysql.ejecutarConsulta("SELECT country.LifeExpectancy, country.Population, country.GNP, country.GovernmentForm, country.HeadOfState, city.Name, city.District, city.Population FROM country JOIN city ON country.Capital = city.ID WHERE country.Code = '" + JtableTabla.getModel().getValueAt(JtableTabla.getSelectedRow(),0)+"'");
-        
+        //Se guarda el resultado de la consulta en un resultset
         ResultSet datos2 = Mysql.getResultSet();
             try { 
-                
+                //Empezamos a cargar los valores que se encuentran en orden en el formulario
                 datos2.next();
                 jTextExpVida.setText(datos2.getString(1));
                 jTextHab.setText(datos2.getString(2));
@@ -591,7 +598,7 @@ public class Ventana extends javax.swing.JFrame {
                 System.out.println(ex);
             }   
             
-            
+           //Se carga la tabla del los idiomas del pais pasando el codigo del pais seleccionado en la tabla
            cargarTablaLenguas(idPaisSelected);
             
             
@@ -600,8 +607,9 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_JtableTablaMouseClicked
 
     private void jButtonAñadirIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirIdiomaActionPerformed
-        
+        //comprobamos que hay algun idioma seleccionado en la tabla
          if (jTableIdiomas.getSelectedRow() != -1) {
+             //en caso de haberlo se cargan en el formulario y se habilita su edicion
             cargarEnPantallaDatosIdioma();
             jButtonAceptarIdioma.setEnabled(true);
             jButtonCancelarIdioma.setEnabled(true);
@@ -609,38 +617,27 @@ public class Ventana extends javax.swing.JFrame {
             jCheckBoxIsOficial.setEnabled(true);
             jTextFieldPercent.setEnabled(true);
         } else {
-         
+            //en caso de que no, se permite su edicion.
             jButtonAceptarIdioma.setEnabled(true);
             jButtonCancelarIdioma.setEnabled(true);
             jTextFieldTextoLenguaje.setEnabled(true);
             jCheckBoxIsOficial.setEnabled(true);
             jTextFieldPercent.setEnabled(true);
          
-         }
-//Al pulsar a añadir
-        
-        
-        // cargando datos abajo.
-        
-        
-        
-        
-        
-        
-        
+         }        
     }//GEN-LAST:event_jButtonAñadirIdiomaActionPerformed
 
     private void cargarEnPantallaDatosIdioma (){
-        
-        System.out.println("cargando datos de idioma: "+ jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0));
-        
+        //cargamos los idiomas del elemento seleccionado
+        System.out.println("Cargando datos de idioma: "+ jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0));
+        //Cargamos los datos del idioma seleccionado en el formulario
         jTextFieldTextoLenguaje.setText((String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0));
         String valorString = (String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),1);
         Boolean valorBoolean = valorString.equalsIgnoreCase("T");
         jCheckBoxIsOficial.setSelected(valorBoolean);
         jTextFieldPercent.setText((String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),2));
       
-        //Poenemos el edit del idioma a false
+         //Poenemos el edit del formulario de idioma a que no pueda editarse
         jButtonAceptarIdioma.setEnabled(false);
         jButtonCancelarIdioma.setEnabled(false);
         jTextFieldTextoLenguaje.setEnabled(false);
@@ -658,8 +655,9 @@ public class Ventana extends javax.swing.JFrame {
         }else {
         aPercent = Double.parseDouble(jTextFieldPercent.getText());
         }
-        
+        //Comprobamos que halla algo seleccionado en la tabla
          if (jTableIdiomas.getSelectedRow() != -1) {
+             //Si hay algo seleccionado actualizamos los valores, y damos un mensaje por pantalla
             try {
                     JOptionPane.showMessageDialog(null, "Idioma actualizado correctamente");
                     //al confirmar el update
@@ -670,36 +668,35 @@ public class Ventana extends javax.swing.JFrame {
             } catch (SQLException ex) {
                 Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
             }
-        
+            //Recargamos la tabla idiomas, y limpiamos el formulario de idiomas
             cargarTablaLenguas(idPaisSelected);
             jTextFieldTextoLenguaje.setText("");
             jCheckBoxIsOficial.setSelected(false);
             jTextFieldPercent.setText("");
 
-            //Poenemos el edit del idioma a false
+            //Poenemos el edit del formulario de idioma a que no pueda editarse
             jButtonAceptarIdioma.setEnabled(false);
             jButtonCancelarIdioma.setEnabled(false);
             jTextFieldTextoLenguaje.setEnabled(false);
             jCheckBoxIsOficial.setEnabled(false);
             jTextFieldPercent.setEnabled(false);
         }else{
+             //si no hay nada seleccionado añadimos un idioma nuevo y mostramos un mensaje por pantalla
             try {
                 JOptionPane.showMessageDialog(null, "Nuevo idioma añadido");
-                System.out.println(aPercent);
                 String insertinSentence = "INSERT INTO countrylanguage (CountryCode, Language, IsOfficial, Percentage) VALUES ('" + idPaisSelected + "', '" + nuevoIdioma + "', '" + esOficial.toString() + "', " + aPercent + ")";
                 System.out.println(insertinSentence);
                 Mysql.insertarRegistro("INSERT INTO countrylanguage (CountryCode, Language, IsOfficial, Percentage) VALUES ('" + idPaisSelected + "', '" + nuevoIdioma + "', '" + esOficial.toString() + "', " + aPercent + ")");
             } catch (SQLException ex) {
                 Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
             }
-             
+             //Recargamos la tabla idiomas, y limpiamos el formulario de idiomas
             cargarTablaLenguas(idPaisSelected);
-        
             jTextFieldTextoLenguaje.setText("");
             jCheckBoxIsOficial.setSelected(false);
             jTextFieldPercent.setText("");
 
-            //Poenemos el edit del idioma a false
+            //Poenemos el edit del formulario de idioma a que no pueda editarse
             jButtonAceptarIdioma.setEnabled(false);
             jButtonCancelarIdioma.setEnabled(false);
             jTextFieldTextoLenguaje.setEnabled(false);
@@ -733,21 +730,22 @@ public class Ventana extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonEliminarIdiomaActionPerformed
 
-    private void jButtonModifiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifiActionPerformed
+    private void jButtonModificarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModificarPaisActionPerformed
         // Modificar datos de un pais
         if (JtableTabla.getSelectedRow() != -1) {
+            //si hay un pais seleccionado permite la edicion de los datos del formulario ademas de activar el boton cancelar y guardar
             jButtonCancelarPais.setEnabled(true);
             jButtonGuardarPais.setEnabled(true);
             permitirEdicionFormulario(true);
         } 
-    }//GEN-LAST:event_jButtonModifiActionPerformed
+    }//GEN-LAST:event_jButtonModificarPaisActionPerformed
 
     private void jButtonGuardarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarPaisActionPerformed
        // Añadimos un nuevo registro a la base de datos
        
        if (JtableTabla.getSelectedRow() != -1) { 
-           
-           // Obtener los valores de los campos de texto y convertirlos a números si es necesario
+           //si se ha seleccionado un pais 
+           // Obtener los valores de los campos de texto y convertirlos a números
             String superficie = jTextSuperficie.getText().isEmpty() ? "0" : jTextSuperficie.getText();
             String expVida = jTextExpVida.getText().isEmpty() ? "0" : jTextExpVida.getText();
             String hab = jTextHab.getText().isEmpty() ? "0" : jTextHab.getText();
@@ -759,22 +757,22 @@ public class Ventana extends javax.swing.JFrame {
             String updateCountryQuery = "UPDATE country SET Name = '" + jTextNombre.getText() + "', Continent = '" + jComboContinente.getSelectedItem().toString() + "', Region = '" + jTextRegion.getText() + "', LocalName = '" + jTextNombreLocal.getText() + "', IndepYear = " + anyoIndependencia + ", SurfaceArea = " + superficie + ", LifeExpectancy = " + expVida + ", Population = " + hab + ", GNP = " + pnb + ", GovernmentForm = '" + jTextFormaGobierno.getText() + "', HeadOfState = '" + jTextCabezaEstado.getText() + "' WHERE Code = '" + jTextCodigo.getText() + "'";
             // Crear la consulta de actualización para city usando los valores obtenidos
             String updateCityQuery = "UPDATE city SET Name = '" + jTextCapital.getText() + "', District = '" + jTextDistrito.getText() + "', Population = " + habCity + " WHERE CountryCode = '" + jTextCodigo.getText() + "'";
-
-           
            try { 
-               System.out.println( Mysql.actualizarValores(updateCountryQuery)+updateCountryQuery);
+                //Ejecutamos las 2 querrys de actualizacion imprimiendo por pantalla un true y lo que se ha ejecutado en caso de hacerlo o sino un false
+                System.out.println( Mysql.actualizarValores(updateCountryQuery)+updateCountryQuery);
                 System.out.println( Mysql.actualizarValores(updateCityQuery)+updateCityQuery); 
            } catch (SQLException ex) {
                Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
            }
           
-           
+           //Una vez que se actualiza muestra un mensaje por pantalla y carga la tabla de paises ademas de activar botones guardar y cancelar y permitir edicion del formulario 
            JOptionPane.showMessageDialog(null, "Pais seleccionado actualizado");
            cargarTabla();
            jButtonCancelarPais.setEnabled(false);
             jButtonGuardarPais.setEnabled(false);
            permitirEdicionFormulario(false);
         } else {
+           
             String consulta = "INSERT INTO country (Code, Name, Continent, Region, LocalName, IndepYear, SurfaceArea, LifeExpectancy, Population, GNP, GovernmentForm, HeadOfState) VALUES ('" + jTextCodigo.getText() + "', '" + jTextNombre.getText() + "', '" +
                             jComboContinente.getSelectedItem().toString() + "', '" + jTextRegion.getText() + "', '" + jTextNombreLocal.getText() + "', " + jTextAnyoIndependencia.getText() + ", " + jTextSuperficie.getText() + ", " + jTextExpVida.getText() + ", " +
                             jTextHab.getText() + ", " + jTextPnb.getText() + ", '" + jTextFormaGobierno.getText() + "', '" + jTextCabezaEstado.getText() + "')";
@@ -1018,7 +1016,7 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JButton jButtonEliminarIdioma;
     private javax.swing.JButton jButtonEliminarPais;
     private javax.swing.JButton jButtonGuardarPais;
-    private javax.swing.JButton jButtonModifi;
+    private javax.swing.JButton jButtonModificarPais;
     private javax.swing.JCheckBox jCheckBoxIsOficial;
     private javax.swing.JComboBox<String> jComboContinente;
     private javax.swing.JLabel jLabel1;
