@@ -113,6 +113,7 @@ public class Ventana extends javax.swing.JFrame {
         JtableTabla.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         JtableTabla.setSelectionBackground(new java.awt.Color(51, 255, 255));
         JtableTabla.setSelectionForeground(new java.awt.Color(0, 255, 204));
+        JtableTabla.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         JtableTabla.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 JtableTablaMouseClicked(evt);
@@ -196,6 +197,8 @@ public class Ventana extends javax.swing.JFrame {
                 "LENGUA", "OFICIAL", "%"
             }
         ));
+        jTableIdiomas.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableIdiomas.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jTableIdiomas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTableIdiomasMouseClicked(evt);
@@ -228,7 +231,10 @@ public class Ventana extends javax.swing.JFrame {
 
         jLabel19.setText("Lengua:");
 
+        jTextFieldTextoLenguaje.setEnabled(false);
+
         jCheckBoxIsOficial.setText("Oficial");
+        jCheckBoxIsOficial.setEnabled(false);
 
         jLabel20.setText("%:");
 
@@ -545,12 +551,17 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextPnbActionPerformed
 
     private void jButtonAñadirIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirIdiomaActionPerformed
-        //Al pulsar a añadir
-        jButtonAceptarIdioma.setEnabled(true);
-        jButtonCancelarIdioma.setEnabled(true);
-        jTextFieldTextoLenguaje.setEnabled(true);
-        jCheckBoxIsOficial.setEnabled(true);
-        jTextFieldPercent.setEnabled(true);
+        
+         if (jTableIdiomas.getSelectedRow() != -1) {
+            cargarEnPantallaDatosIdioma();
+            jButtonAceptarIdioma.setEnabled(true);
+            jButtonCancelarIdioma.setEnabled(true);
+            jTextFieldTextoLenguaje.setEnabled(true);
+            jCheckBoxIsOficial.setEnabled(true);
+            jTextFieldPercent.setEnabled(true);
+        }
+//Al pulsar a añadir
+        
         
         // cargando datos abajo.
         
@@ -563,12 +574,14 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonAñadirIdiomaActionPerformed
 
     private void jTableIdiomasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableIdiomasMouseClicked
-       cargarEnPantallaDatosIdioma();
+       
+       
+       
     }//GEN-LAST:event_jTableIdiomasMouseClicked
 
     private void cargarEnPantallaDatosIdioma (){
         
-        System.out.println("");
+        System.out.println("cargando datos de idioma: "+ jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0));
         
         jTextFieldTextoLenguaje.setText((String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0));
         String valorString = (String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),1);
@@ -591,7 +604,7 @@ public class Ventana extends javax.swing.JFrame {
                 String nuevoIdioma =  jTextFieldTextoLenguaje.getText();
                 String esOficial = jCheckBoxIsOficial.isSelected() ? "T" : "F";
                 String aPercent = jTextFieldPercent.getText();
-                String updateQuery = "UPDATE countrylanguage SET Language = '" + nuevoIdioma + "', isOfficial = '" + esOficial + "', Percentage = " + aPercent + " WHERE Language = '" + idiomaAntesDeUpdate + "'";
+                String updateQuery = "UPDATE countrylanguage SET Language = '" + nuevoIdioma + "', isOfficial = '" + esOficial + "', Percentage = " + aPercent + " WHERE Language = '" + idiomaAntesDeUpdate + "' and countrycode = '"+idPaisSelected+"'";
                
         System.out.println(updateQuery);
         System.out.println(Mysql.actualizarValores(updateQuery) + updateQuery); 
@@ -599,7 +612,18 @@ public class Ventana extends javax.swing.JFrame {
                 Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
             }
         cargarTablaLenguas(idPaisSelected);
-        cargarEnPantallaDatosIdioma();
+        
+        jTextFieldTextoLenguaje.setText("");
+        jCheckBoxIsOficial.setSelected(false);
+        jTextFieldPercent.setText("");
+      
+        //Poenemos el edit del idioma a false
+        jButtonAceptarIdioma.setEnabled(false);
+        jButtonCancelarIdioma.setEnabled(false);
+        jTextFieldTextoLenguaje.setEnabled(false);
+        jCheckBoxIsOficial.setEnabled(false);
+        jTextFieldPercent.setEnabled(false);
+        //cargarEnPantallaDatosIdioma();
     }//GEN-LAST:event_jButtonAceptarIdiomaActionPerformed
 
     public void cargarContinentes(){
@@ -616,16 +640,13 @@ public class Ventana extends javax.swing.JFrame {
             }
     
     }
-    
-   public void conectaMysql(){
+    private void conectaMysql(){
         Mysql = new Conexion("com.mysql.cj.jdbc.Driver","mysql","localhost", "3306","world", "root", "inca.2024");
    }
-   
     private void desconectaMysql(){
         Mysql.cierraConexion(); 
     }
-    
-    public List<Object[]> convertirResultSetALista(ResultSet rs) {
+    private List<Object[]> convertirResultSetALista(ResultSet rs) {
     List<Object[]> resultados = new ArrayList<>();
     try {
         while (rs.next()) {
@@ -640,10 +661,7 @@ public class Ventana extends javax.swing.JFrame {
     }
     return resultados;
 }
-   
-    
- 
-    public void cargarTabla() {
+    private void cargarTabla() {
 
         
         try {
@@ -674,8 +692,7 @@ public class Ventana extends javax.swing.JFrame {
         }
  
 }
-    
-    public void cargarTablaLenguas(Object idPais) {
+    private void cargarTablaLenguas(Object idPais) {
 
         System.out.println("Cargando tabla Lenguas del pais con id: " + idPais);
         
@@ -690,7 +707,7 @@ public class Ventana extends javax.swing.JFrame {
 
         System.out.println(numLenguas);
 
-        String[][] paisData = new String[numLenguas][4];
+        String[][] paisData = new String[numLenguas][3];
         String[] columnNames = {"LENGUA", "OFICIAL", "%"}; 
 
         for (int i = 0; i < numLenguas; i++) {
