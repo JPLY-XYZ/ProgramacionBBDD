@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 
 
@@ -85,9 +86,9 @@ public class Ventana extends javax.swing.JFrame {
         jLabel20 = new javax.swing.JLabel();
         jButtonAñadirPais = new javax.swing.JButton();
         jButtonModifi = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
+        jButtonEliminarPais = new javax.swing.JButton();
+        jButtonGuardarPais = new javax.swing.JButton();
+        jButtonCancelarPais = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Países, capitales y lenguas");
@@ -127,7 +128,7 @@ public class Ventana extends javax.swing.JFrame {
 
         jLabel3.setText("Continente:");
 
-        jComboContinente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboContinente.setEnabled(false);
 
         jLabel4.setText("Región:");
 
@@ -142,11 +143,22 @@ public class Ventana extends javax.swing.JFrame {
 
         jLabel8.setText("Superficie:");
 
+        jTextCodigo.setEnabled(false);
         jTextCodigo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextCodigoActionPerformed(evt);
             }
         });
+
+        jTextNombre.setEnabled(false);
+
+        jTextRegion.setEnabled(false);
+
+        jTextNombreLocal.setEnabled(false);
+
+        jTextAnyoIndependencia.setEnabled(false);
+
+        jTextSuperficie.setEnabled(false);
 
         jSeparator1.setBackground(new java.awt.Color(0, 0, 0));
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
@@ -170,13 +182,28 @@ public class Ventana extends javax.swing.JFrame {
 
         jLabel16.setText("Distrito:");
 
+        jTextExpVida.setEnabled(false);
+
         jLabel17.setText("Habitantes:");
 
+        jTextHab.setEnabled(false);
+
+        jTextPnb.setEnabled(false);
         jTextPnb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextPnbActionPerformed(evt);
             }
         });
+
+        jTextFormaGobierno.setEnabled(false);
+
+        jTextCabezaEstado.setEnabled(false);
+
+        jTextCapital.setEnabled(false);
+
+        jTextDistrito.setEnabled(false);
+
+        jTextHabcity.setEnabled(false);
 
         jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
@@ -251,12 +278,24 @@ public class Ventana extends javax.swing.JFrame {
         });
 
         jButtonModifi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/contrato.png"))); // NOI18N
+        jButtonModifi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModifiActionPerformed(evt);
+            }
+        });
 
-        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/hoja-de-papel.png"))); // NOI18N
+        jButtonEliminarPais.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/hoja-de-papel.png"))); // NOI18N
 
-        jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/dinero.png"))); // NOI18N
+        jButtonGuardarPais.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/dinero.png"))); // NOI18N
+        jButtonGuardarPais.setEnabled(false);
+        jButtonGuardarPais.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonGuardarPaisActionPerformed(evt);
+            }
+        });
 
-        jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/cruzar.png"))); // NOI18N
+        jButtonCancelarPais.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/cruzar.png"))); // NOI18N
+        jButtonCancelarPais.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -368,11 +407,11 @@ public class Ventana extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonModifi)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton7)
+                        .addComponent(jButtonEliminarPais)
                         .addGap(12, 12, 12)
-                        .addComponent(jButton8)
+                        .addComponent(jButtonGuardarPais)
                         .addGap(15, 15, 15)
-                        .addComponent(jButton9)
+                        .addComponent(jButtonCancelarPais)
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -380,9 +419,9 @@ public class Ventana extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton7)
-                    .addComponent(jButton8)
-                    .addComponent(jButton9, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonEliminarPais)
+                    .addComponent(jButtonGuardarPais)
+                    .addComponent(jButtonCancelarPais, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButtonAñadirPais)
                         .addComponent(jButtonModifi)))
@@ -649,7 +688,43 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonAceptarIdiomaActionPerformed
 
     private void jButtonAñadirPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirPaisActionPerformed
-        // Añadir cosas
+        // Añadir nuevo Pais
+        //activamos la edicion en la parte de los datos
+        jButtonCancelarPais.setEnabled(true);
+        jButtonGuardarPais.setEnabled(true);
+        jTextCodigo.setEnabled(true);
+        jTextNombre.setEnabled(true);
+        jComboContinente.setEnabled(true);
+        jTextRegion.setEnabled(true);
+        jTextNombreLocal.setEnabled(true);
+        jTextAnyoIndependencia.setEnabled(true);
+        jTextSuperficie.setEnabled(true);
+        jTextExpVida.setEnabled(true);
+        jTextHab.setEnabled(true);
+        jTextPnb.setEnabled(true);
+        jTextFormaGobierno.setEnabled(true);
+        jTextCabezaEstado.setEnabled(true);
+        jTextCapital.setEnabled(true);
+        jTextDistrito.setEnabled(true);
+        jTextHabcity.setEnabled(true);
+       
+        cargarContinentes();
+        //seteamos los datos a vacio
+        jTextCodigo.setText("");
+        jTextNombre.setText("");
+        jComboContinente.setSelectedItem("");
+        jTextRegion.setText("");
+        jTextNombreLocal.setText("");
+        jTextAnyoIndependencia.setText("");
+        jTextSuperficie.setText(""); 
+        jTextExpVida.setText("");
+        jTextHab.setText("");
+        jTextPnb.setText("");
+        jTextFormaGobierno.setText("");
+        jTextCabezaEstado.setText("");
+        jTextCapital.setText("");
+        jTextDistrito.setText("");
+        jTextHabcity.setText("");
     }//GEN-LAST:event_jButtonAñadirPaisActionPerformed
 
     private void jButtonEliminarIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarIdiomaActionPerformed
@@ -665,6 +740,82 @@ public class Ventana extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jButtonEliminarIdiomaActionPerformed
+
+    private void jButtonModifiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifiActionPerformed
+        // Modificar datos de un pais
+        
+        if (JtableTabla.getSelectedRow() != -1) {
+        jButtonCancelarPais.setEnabled(true);
+        jButtonGuardarPais.setEnabled(true);
+         } 
+    }//GEN-LAST:event_jButtonModifiActionPerformed
+
+    private void jButtonGuardarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarPaisActionPerformed
+       // Añadimos un nuevo registro a la base de datos
+       
+       if (jTextCodigo.getText().isEmpty() || jTextNombre.getText().isEmpty() || jComboContinente.getSelectedItem().toString().isEmpty() ||  jTextRegion.getText().isEmpty() || jTextNombreLocal.getText().isEmpty() || jTextAnyoIndependencia.getText().isEmpty() || 
+            jTextSuperficie.getText().isEmpty() || jTextExpVida.getText().isEmpty() || jTextHab.getText().isEmpty() || jTextPnb.getText().isEmpty() || jTextFormaGobierno.getText().isEmpty() || jTextCabezaEstado.getText().isEmpty() || 
+            jTextCapital.getText().isEmpty() || jTextDistrito.getText().isEmpty() || jTextHabcity.getText().isEmpty()) { 
+           JOptionPane.showMessageDialog(null, "Algun dato esta vacio");
+        } else {
+            String consulta = "INSERT INTO country (Code, Name, Continent, Region, LocalName, IndepYear, SurfaceArea, LifeExpectancy, Population, GNP, GovernmentForm, HeadOfState) VALUES ('" + jTextCodigo.getText() + "', '" + jTextNombre.getText() + "', '" +
+                            jComboContinente.getSelectedItem().toString() + "', '" + jTextRegion.getText() + "', '" + jTextNombreLocal.getText() + "', " + jTextAnyoIndependencia.getText() + ", " + jTextSuperficie.getText() + ", " + jTextExpVida.getText() + ", " +
+                            jTextHab.getText() + ", " + jTextPnb.getText() + ", '" + jTextFormaGobierno.getText() + "', '" + jTextCabezaEstado.getText() + "')";
+            String consulta2 = "INSERT INTO city (Name, District, Population, CountryCode) VALUES ('" + jTextCapital.getText() + "', '" + jTextDistrito.getText() + "', '" + jTextHabcity.getText() + "', '"+ jTextCodigo.getText()+ "')";
+            System.out.println(consulta + consulta2);
+         
+           try {
+               Mysql.actualizarValores(consulta);
+               Mysql.actualizarValores(consulta2);
+           } catch (SQLException ex) {
+               Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+           }
+               
+          
+           
+           //indicamos por pantalla que se a completado 
+           JOptionPane.showMessageDialog(null, "Se ha añadido nuevo registro");
+          //una vez añadidos seteamos todo a blanco  
+            jTextCodigo.setText("");
+            jTextNombre.setText("");
+            jComboContinente.setSelectedItem("");
+            jTextRegion.setText("");
+            jTextNombreLocal.setText("");
+            jTextAnyoIndependencia.setText("");
+            jTextSuperficie.setText(""); 
+            jTextExpVida.setText("");
+            jTextHab.setText("");
+            jTextPnb.setText("");
+            jTextFormaGobierno.setText("");
+            jTextCabezaEstado.setText("");
+            jTextCapital.setText("");
+            jTextDistrito.setText("");
+            jTextHabcity.setText("");
+            
+            // seteamos todo a que no se pueda editar
+            jButtonCancelarPais.setEnabled(false);
+            jButtonGuardarPais.setEnabled(false);
+            jTextCodigo.setEnabled(false);
+            jTextNombre.setEnabled(false);
+            jComboContinente.setEnabled(false);
+            jTextRegion.setEnabled(false);
+            jTextNombreLocal.setEnabled(false);
+            jTextAnyoIndependencia.setEnabled(false);
+            jTextSuperficie.setEnabled(false);
+            jTextExpVida.setEnabled(false);
+            jTextHab.setEnabled(false);
+            jTextPnb.setEnabled(false);
+            jTextFormaGobierno.setEnabled(false);
+            jTextCabezaEstado.setEnabled(false);
+            jTextCapital.setEnabled(false);
+            jTextDistrito.setEnabled(false);
+            jTextHabcity.setEnabled(false);
+            
+
+            
+        }
+       
+    }//GEN-LAST:event_jButtonGuardarPaisActionPerformed
 
     public void cargarContinentes(){
     
@@ -808,14 +959,14 @@ public class Ventana extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable JtableTabla;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JButton jButtonAceptarIdioma;
     private javax.swing.JButton jButtonAñadirIdioma;
     private javax.swing.JButton jButtonAñadirPais;
     private javax.swing.JButton jButtonCancelarIdioma;
+    private javax.swing.JButton jButtonCancelarPais;
     private javax.swing.JButton jButtonEliminarIdioma;
+    private javax.swing.JButton jButtonEliminarPais;
+    private javax.swing.JButton jButtonGuardarPais;
     private javax.swing.JButton jButtonModifi;
     private javax.swing.JCheckBox jCheckBoxIsOficial;
     private javax.swing.JComboBox<String> jComboContinente;
