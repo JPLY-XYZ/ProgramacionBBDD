@@ -23,10 +23,10 @@ public class ModeloTabla extends AbstractTableModel{
 
     // Método para escribir el contenido.
     public void setData(Object[][] data, String[] columNames) {
-        
         this.data = data;
         this.columnNames = columNames;
     }
+    
 
 
     //únicamente retornamos el numero de elementos del

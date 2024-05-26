@@ -145,11 +145,6 @@ public class Ventana extends javax.swing.JFrame {
         jLabel8.setText("Superficie:");
 
         jTextCodigo.setEnabled(false);
-        jTextCodigo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextCodigoActionPerformed(evt);
-            }
-        });
 
         jTextNombre.setEnabled(false);
 
@@ -226,6 +221,7 @@ public class Ventana extends javax.swing.JFrame {
             }
         ));
         jTableIdiomas.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableIdiomas.setEnabled(false);
         jTableIdiomas.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jTableIdiomas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -235,6 +231,7 @@ public class Ventana extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTableIdiomas);
 
         jButtonAñadirIdioma.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/mas.png"))); // NOI18N
+        jButtonAñadirIdioma.setEnabled(false);
         jButtonAñadirIdioma.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonAñadirIdiomaActionPerformed(evt);
@@ -242,6 +239,7 @@ public class Ventana extends javax.swing.JFrame {
         });
 
         jButtonEliminarIdioma.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/menos.png"))); // NOI18N
+        jButtonEliminarIdioma.setEnabled(false);
         jButtonEliminarIdioma.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonEliminarIdiomaActionPerformed(evt);
@@ -268,6 +266,8 @@ public class Ventana extends javax.swing.JFrame {
 
         jCheckBoxIsOficial.setText("Oficial");
         jCheckBoxIsOficial.setEnabled(false);
+
+        jTextFieldPercent.setEnabled(false);
 
         jLabel20.setText("%:");
 
@@ -532,10 +532,6 @@ public class Ventana extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextCodigoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextCodigoActionPerformed
-
     private void jButtonCancelarIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarIdiomaActionPerformed
         // Cancelando accion de seleccion de una en la tabla
         jTextFieldTextoLenguaje.setText("");
@@ -668,46 +664,52 @@ public class Ventana extends javax.swing.JFrame {
     }
     
     private void jButtonAceptarIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAceptarIdiomaActionPerformed
-        
-                
         //Seteamos los valores de los textos que hay en pantala justo debajo de la tabla
-        
         String nuevoIdioma =  jTextFieldTextoLenguaje.getText();
         String esOficial = jCheckBoxIsOficial.isSelected() ? "T" : "F";
-        String aPercent = jTextFieldPercent.getText();
+        
+        Double aPercent;
+        if (jTextFieldPercent.getText().isEmpty()) {
+        aPercent = 0.0;
+        }else {
+        aPercent = Double.parseDouble(jTextFieldPercent.getText());
+        }
         
          if (jTableIdiomas.getSelectedRow() != -1) {
-        try {
-                //al confirmar el update
-                String idiomaAntesDeUpdate= (String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0);
-                String updateQuery = "UPDATE countrylanguage SET Language = '" + nuevoIdioma + "', isOfficial = '" + esOficial + "', Percentage = " + aPercent + " WHERE Language = '" + idiomaAntesDeUpdate + "' and countrycode = '"+idPaisSelected+"'";
-               
-        System.out.println(updateQuery);
-        System.out.println(Mysql.actualizarValores(updateQuery) + updateQuery); 
+            try {
+                    JOptionPane.showMessageDialog(null, "Idioma actualizado correctamente");
+                    //al confirmar el update
+                    String idiomaAntesDeUpdate= (String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0);
+                    String updateQuery = "UPDATE countrylanguage SET Language = '" + nuevoIdioma + "', isOfficial = '" + esOficial + "', Percentage = " + aPercent + " WHERE Language = '" + idiomaAntesDeUpdate + "' and countrycode = '"+idPaisSelected+"'";
+                    System.out.println(updateQuery);
+                    System.out.println(Mysql.actualizarValores(updateQuery) + updateQuery); 
             } catch (SQLException ex) {
                 Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
             }
-        cargarTablaLenguas(idPaisSelected);
         
-        jTextFieldTextoLenguaje.setText("");
-        jCheckBoxIsOficial.setSelected(false);
-        jTextFieldPercent.setText("");
-      
-        //Poenemos el edit del idioma a false
-        jButtonAceptarIdioma.setEnabled(false);
-        jButtonCancelarIdioma.setEnabled(false);
-        jTextFieldTextoLenguaje.setEnabled(false);
-        jCheckBoxIsOficial.setEnabled(false);
-        jTextFieldPercent.setEnabled(false);
-         }else{
-         
+            cargarTablaLenguas(idPaisSelected);
+            jTextFieldTextoLenguaje.setText("");
+            jCheckBoxIsOficial.setSelected(false);
+            jTextFieldPercent.setText("");
+
+            //Poenemos el edit del idioma a false
+            jButtonAceptarIdioma.setEnabled(false);
+            jButtonCancelarIdioma.setEnabled(false);
+            jTextFieldTextoLenguaje.setEnabled(false);
+            jCheckBoxIsOficial.setEnabled(false);
+            jTextFieldPercent.setEnabled(false);
+        }else{
             try {
-                Mysql.insertarRegistro("INSERT INTO countrylanguage (CountryCode, Language, IsOfficial, Percentage) " + "VALUES ('" + idPaisSelected + "', '" + nuevoIdioma + "', '" + esOficial + "', " + aPercent + ")");
+                JOptionPane.showMessageDialog(null, "Nuevo idioma añadido");
+                System.out.println(aPercent);
+                String insertinSentence = "INSERT INTO countrylanguage (CountryCode, Language, IsOfficial, Percentage) VALUES ('" + idPaisSelected + "', '" + nuevoIdioma + "', '" + esOficial.toString() + "', " + aPercent + ")";
+                System.out.println(insertinSentence);
+                Mysql.insertarRegistro("INSERT INTO countrylanguage (CountryCode, Language, IsOfficial, Percentage) VALUES ('" + idPaisSelected + "', '" + nuevoIdioma + "', '" + esOficial.toString() + "', " + aPercent + ")");
             } catch (SQLException ex) {
                 Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
             }
              
-            //cargarTablaLenguas(idPaisSelected);
+            cargarTablaLenguas(idPaisSelected);
         
             jTextFieldTextoLenguaje.setText("");
             jCheckBoxIsOficial.setSelected(false);
@@ -720,12 +722,15 @@ public class Ventana extends javax.swing.JFrame {
             jCheckBoxIsOficial.setEnabled(false);
             jTextFieldPercent.setEnabled(false);
          
-         }
+        }
     }//GEN-LAST:event_jButtonAceptarIdiomaActionPerformed
 
     private void jButtonAñadirPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirPaisActionPerformed
         // Añadir nuevo Pais
         //activamos la edicion en la parte de los datos
+        idPaisSelected = null;
+        cargarTabla();
+        cargarTablaLenguas(idPaisSelected);
         jButtonCancelarPais.setEnabled(true);
         jButtonGuardarPais.setEnabled(true);
         jTextCodigo.setEnabled(true);
@@ -890,73 +895,89 @@ public class Ventana extends javax.swing.JFrame {
     return resultados;
 }
     private void cargarTabla() {
-
+        
+        jButtonAñadirIdioma.setEnabled(false);
+        jButtonEliminarIdioma.setEnabled(false);
+        jTableIdiomas.setEnabled(false);
         
         try {
             Mysql.ejecutarConsulta("SELECT COUNTRY.CODE, COUNTRY.NAME, COUNTRY.CONTINENT, COUNTRY.REGION FROM COUNTRY");
              List<Object[]> resultados = convertirResultSetALista(Mysql.getResultSet());
 
-    if (!resultados.isEmpty()) {
-        ModeloTabla tablaMia = new ModeloTabla();
-        int numPaises = resultados.size();
-
-        System.out.println(numPaises);
-
-        String[][] paisData = new String[numPaises][4];
-        String[] columnNames = {"Código", "Nombre", "Continente", "Región"}; 
-
-        for (int i = 0; i < numPaises; i++) {
-            Object[] pais = resultados.get(i);
-            paisData[i][0] = (String) pais[0];
-            paisData[i][1] = (String) pais[1];
-            paisData[i][2] = (String) pais[2];
-            paisData[i][3] = (String) pais[3];
-        }
-        tablaMia.setData(paisData, columnNames); 
-        JtableTabla.setModel(tablaMia);
-        }
-        } catch (java.lang.NullPointerException e) {
+            if (!resultados.isEmpty()) {
+                ModeloTabla tablaMia = new ModeloTabla();
+                int numPaises = resultados.size();
+                System.out.println(numPaises);
+                String[][] paisData = new String[numPaises][4];
+                String[] columnNames = {"Código", "Nombre", "Continente", "Región"}; 
+                for (int i = 0; i < numPaises; i++) {
+                    Object[] pais = resultados.get(i);
+                    paisData[i][0] = (String) pais[0];
+                    paisData[i][1] = (String) pais[1];
+                    paisData[i][2] = (String) pais[2];
+                    paisData[i][3] = (String) pais[3];
+                }
+                tablaMia.setData(paisData, columnNames); 
+                JtableTabla.setModel(tablaMia);
+               }
+        } 
+        catch (java.lang.NullPointerException e) {
             System.out.println(e);
         }
- 
-}
+    }
     private void cargarTablaLenguas(Object idPais) {
-
         System.out.println("Cargando tabla Lenguas del pais con id: " + idPais);
-        
-        try {
             
-            Mysql.ejecutarConsulta("SELECT Language, isOfficial, Percentage FROM countrylanguage WHERE CountryCode like '"+idPais+"'");
-             List<Object[]> resultados2 = convertirResultSetALista(Mysql.getResultSet());
-
-    if (!resultados2.isEmpty()) {
+        if (idPais == null) {
+            limpiarTablaIdiomas();            
+        }   else{
+            //seteamos el poder seleccionar de la tabla editar y añadir
+            jButtonAñadirIdioma.setEnabled(true);
+            jButtonEliminarIdioma.setEnabled(true);
+            jTableIdiomas.setEnabled(true);
+            try {
+                Mysql.ejecutarConsulta("SELECT Language, isOfficial, Percentage FROM countrylanguage WHERE CountryCode like '"+idPais+"'");
+                List<Object[]> resultadoConsultaIdiomas = convertirResultSetALista(Mysql.getResultSet());
+                if (!resultadoConsultaIdiomas.isEmpty()) {
+                    cargarListaIdiomas(resultadoConsultaIdiomas);
+                } else{
+                limpiarTablaIdiomas();
+                jButtonAñadirIdioma.setEnabled(true);
+                }
+               
+            } catch (java.lang.NullPointerException e) {
+                System.out.println(e);
+            }
+        } 
+}
+    private void limpiarTablaIdiomas(){
+        System.out.println("No se esta cargando nada en la tabla");
+        jButtonAñadirIdioma.setEnabled(false);
+        jButtonEliminarIdioma.setEnabled(false);
+        jTableIdiomas.setEnabled(false);
+        ModeloTabla tablaVacia = new ModeloTabla();
+        String[][] paisData = new String[3][3];
+        String[] columnNames = {"LENGUA", "OFICIAL", "%"};
+        paisData[0][0] = "";  
+        tablaVacia.setData(paisData, columnNames);
+        jTableIdiomas.setModel(tablaVacia);
+    }
+    private void cargarListaIdiomas(List<Object[]> resultados){
         ModeloTabla tablaMia2 = new ModeloTabla();
-        int numLenguas = resultados2.size();
-
-        System.out.println(numLenguas);
-
-        String[][] paisData = new String[numLenguas][4];
-        String[] columnNames = {"LENGUA", "OFICIAL", "%"}; 
-
+        int numLenguas = resultados.size();
+        System.out.println("Se van a cargar: " +numLenguas+ " Registros");
+        String[][] paisData = new String[numLenguas][3];
+        String[] columnNames = {"LENGUA", "OFICIAL", "%"};
+        //Se hace un bucle por cada registro encontrado y se añade al modelo
         for (int i = 0; i < numLenguas; i++) {
-            Object[] paisidiomas = resultados2.get(i);
+            Object[] paisidiomas = resultados.get(i);
             paisData[i][0] = paisidiomas[0].toString();
             paisData[i][1] = paisidiomas[1].toString();
             paisData[i][2] = paisidiomas[2] .toString();
         }
-        tablaMia2.setData(paisData, columnNames); 
+        tablaMia2.setData(paisData, columnNames);
         jTableIdiomas.setModel(tablaMia2);
-        }
-        } catch (java.lang.NullPointerException e) {
-            System.out.println(e);
-        }
-        
-        
-        
-        
-       
-   
-}
+    }
     
     
     

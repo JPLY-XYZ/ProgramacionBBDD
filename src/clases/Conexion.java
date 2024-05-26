@@ -27,7 +27,7 @@ public class Conexion {
             System.out.println(lclCadenaConexion);
             conexion = DriverManager.getConnection("jdbc:"+conector+"://" + host + ":" + puerto + "/" + baseDatos, usuario, password);
             System.out.println(conexion);
-            conexion.setAutoCommit(false);
+            conexion.setAutoCommit(true);
         } catch (ClassNotFoundException | SQLException ex) {
             System.out.println(ex.getMessage());
         }        
