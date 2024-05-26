@@ -651,9 +651,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextFieldTextoLenguaje">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField15"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="jCheckBoxIsOficial">
       <Properties>
@@ -661,9 +658,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextFieldPercent">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField16"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel20">
       <Properties>

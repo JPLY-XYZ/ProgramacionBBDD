@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 public class Ventana extends javax.swing.JFrame {
 
         Conexion Mysql;
-    
+        Object idPaisSelected;
     
    
     public Ventana() {
@@ -228,11 +228,7 @@ public class Ventana extends javax.swing.JFrame {
 
         jLabel19.setText("Lengua:");
 
-        jTextFieldTextoLenguaje.setText("jTextField15");
-
         jCheckBoxIsOficial.setText("Oficial");
-
-        jTextFieldPercent.setText("jTextField16");
 
         jLabel20.setText("%:");
 
@@ -495,7 +491,7 @@ public class Ventana extends javax.swing.JFrame {
     private void JtableTablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableTablaMouseClicked
         // Al pulsar sobre uno de la tabla
  
-        Object idPais = JtableTabla.getModel().getValueAt(JtableTabla.getSelectedRow(),0);
+        idPaisSelected = JtableTabla.getModel().getValueAt(JtableTabla.getSelectedRow(),0);
         
         Mysql.ejecutarConsulta("SELECT country.Code, country.Name, country.Continent, country.Region, country.LocalName, country.IndepYear, country.SurfaceArea FROM country WHERE Code = '" + JtableTabla.getModel().getValueAt(JtableTabla.getSelectedRow(),0)+"'");
         
@@ -537,7 +533,7 @@ public class Ventana extends javax.swing.JFrame {
             }   
             
             
-           cargarTablaLenguas(idPais);
+           cargarTablaLenguas(idPaisSelected);
             
             
        
@@ -552,6 +548,9 @@ public class Ventana extends javax.swing.JFrame {
         //Al pulsar a añadir
         jButtonAceptarIdioma.setEnabled(true);
         jButtonCancelarIdioma.setEnabled(true);
+        jTextFieldTextoLenguaje.setEnabled(true);
+        jCheckBoxIsOficial.setEnabled(true);
+        jTextFieldPercent.setEnabled(true);
         
         // cargando datos abajo.
         
@@ -564,24 +563,43 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonAñadirIdiomaActionPerformed
 
     private void jTableIdiomasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableIdiomasMouseClicked
-       jTextFieldTextoLenguaje.setText((String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0));
-       String valorString = (String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),1);
-       Boolean valorBoolean = valorString.equalsIgnoreCase("T");
-       jCheckBoxIsOficial.setSelected(valorBoolean);
-       jTextFieldPercent.setText((String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),2));
+       cargarEnPantallaDatosIdioma();
     }//GEN-LAST:event_jTableIdiomasMouseClicked
 
+    private void cargarEnPantallaDatosIdioma (){
+        
+        System.out.println("");
+        
+        jTextFieldTextoLenguaje.setText((String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0));
+        String valorString = (String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),1);
+        Boolean valorBoolean = valorString.equalsIgnoreCase("T");
+        jCheckBoxIsOficial.setSelected(valorBoolean);
+        jTextFieldPercent.setText((String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),2));
+      
+        //Poenemos el edit del idioma a false
+        jButtonAceptarIdioma.setEnabled(false);
+        jButtonCancelarIdioma.setEnabled(false);
+        jTextFieldTextoLenguaje.setEnabled(false);
+        jCheckBoxIsOficial.setEnabled(false);
+        jTextFieldPercent.setEnabled(false);
+    }
+    
     private void jButtonAceptarIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAceptarIdiomaActionPerformed
-            try {
+        try {
                 //al confirmar el update
-                
-                System.out.println(Mysql.actualizarValores("UPDATE countrylanguage SET Language = '" + jTextFieldTextoLenguaje.getText() +
-                        "', isOfficial = '" + jCheckBoxIsOficial +
-                        "', Percentage = " + jTextFieldPercent.getText() +
-                        " WHERE CountryCode = '" + (String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0) + "'")); 
+                String idiomaAntesDeUpdate= (String) jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0);
+                String nuevoIdioma =  jTextFieldTextoLenguaje.getText();
+                String esOficial = jCheckBoxIsOficial.isSelected() ? "T" : "F";
+                String aPercent = jTextFieldPercent.getText();
+                String updateQuery = "UPDATE countrylanguage SET Language = '" + nuevoIdioma + "', isOfficial = '" + esOficial + "', Percentage = " + aPercent + " WHERE Language = '" + idiomaAntesDeUpdate + "'";
+               
+        System.out.println(updateQuery);
+        System.out.println(Mysql.actualizarValores(updateQuery) + updateQuery); 
             } catch (SQLException ex) {
                 Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
             }
+        cargarTablaLenguas(idPaisSelected);
+        cargarEnPantallaDatosIdioma();
     }//GEN-LAST:event_jButtonAceptarIdiomaActionPerformed
 
     public void cargarContinentes(){
@@ -659,6 +677,7 @@ public class Ventana extends javax.swing.JFrame {
     
     public void cargarTablaLenguas(Object idPais) {
 
+        System.out.println("Cargando tabla Lenguas del pais con id: " + idPais);
         
         try {
             
