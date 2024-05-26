@@ -185,11 +185,6 @@ public class Ventana extends javax.swing.JFrame {
         jTextHab.setEnabled(false);
 
         jTextPnb.setEnabled(false);
-        jTextPnb.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextPnbActionPerformed(evt);
-            }
-        });
 
         jTextFormaGobierno.setEnabled(false);
 
@@ -223,11 +218,6 @@ public class Ventana extends javax.swing.JFrame {
         jTableIdiomas.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         jTableIdiomas.setEnabled(false);
         jTableIdiomas.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jTableIdiomas.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableIdiomasMouseClicked(evt);
-            }
-        });
         jScrollPane2.setViewportView(jTableIdiomas);
 
         jButtonAñadirIdioma.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/mas.png"))); // NOI18N
@@ -286,6 +276,11 @@ public class Ventana extends javax.swing.JFrame {
         });
 
         jButtonEliminarPais.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/hoja-de-papel.png"))); // NOI18N
+        jButtonEliminarPais.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminarPaisActionPerformed(evt);
+            }
+        });
 
         jButtonGuardarPais.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/dinero.png"))); // NOI18N
         jButtonGuardarPais.setEnabled(false);
@@ -604,10 +599,6 @@ public class Ventana extends javax.swing.JFrame {
         
     }//GEN-LAST:event_JtableTablaMouseClicked
 
-    private void jTextPnbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextPnbActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextPnbActionPerformed
-
     private void jButtonAñadirIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirIdiomaActionPerformed
         
          if (jTableIdiomas.getSelectedRow() != -1) {
@@ -639,12 +630,6 @@ public class Ventana extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jButtonAñadirIdiomaActionPerformed
 
-    private void jTableIdiomasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableIdiomasMouseClicked
-       
-       
-       
-    }//GEN-LAST:event_jTableIdiomasMouseClicked
-
     private void cargarEnPantallaDatosIdioma (){
         
         System.out.println("cargando datos de idioma: "+ jTableIdiomas.getModel().getValueAt(jTableIdiomas.getSelectedRow(),0));
@@ -667,7 +652,6 @@ public class Ventana extends javax.swing.JFrame {
         //Seteamos los valores de los textos que hay en pantala justo debajo de la tabla
         String nuevoIdioma =  jTextFieldTextoLenguaje.getText();
         String esOficial = jCheckBoxIsOficial.isSelected() ? "T" : "F";
-        
         Double aPercent;
         if (jTextFieldPercent.getText().isEmpty()) {
         aPercent = 0.0;
@@ -728,44 +712,11 @@ public class Ventana extends javax.swing.JFrame {
     private void jButtonAñadirPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirPaisActionPerformed
         // Añadir nuevo Pais
         //activamos la edicion en la parte de los datos
-        idPaisSelected = null;
         cargarTabla();
-        cargarTablaLenguas(idPaisSelected);
         jButtonCancelarPais.setEnabled(true);
         jButtonGuardarPais.setEnabled(true);
-        jTextCodigo.setEnabled(true);
-        jTextNombre.setEnabled(true);
-        jComboContinente.setEnabled(true);
-        jTextRegion.setEnabled(true);
-        jTextNombreLocal.setEnabled(true);
-        jTextAnyoIndependencia.setEnabled(true);
-        jTextSuperficie.setEnabled(true);
-        jTextExpVida.setEnabled(true);
-        jTextHab.setEnabled(true);
-        jTextPnb.setEnabled(true);
-        jTextFormaGobierno.setEnabled(true);
-        jTextCabezaEstado.setEnabled(true);
-        jTextCapital.setEnabled(true);
-        jTextDistrito.setEnabled(true);
-        jTextHabcity.setEnabled(true);
-       
-        cargarContinentes();
-        //seteamos los datos a vacio
-        jTextCodigo.setText("");
-        jTextNombre.setText("");
-        jComboContinente.setSelectedItem("");
-        jTextRegion.setText("");
-        jTextNombreLocal.setText("");
-        jTextAnyoIndependencia.setText("");
-        jTextSuperficie.setText(""); 
-        jTextExpVida.setText("");
-        jTextHab.setText("");
-        jTextPnb.setText("");
-        jTextFormaGobierno.setText("");
-        jTextCabezaEstado.setText("");
-        jTextCapital.setText("");
-        jTextDistrito.setText("");
-        jTextHabcity.setText("");
+        limpiarFormulario(true);
+        cargarContinentes();  
     }//GEN-LAST:event_jButtonAñadirPaisActionPerformed
 
     private void jButtonEliminarIdiomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarIdiomaActionPerformed
@@ -784,20 +735,45 @@ public class Ventana extends javax.swing.JFrame {
 
     private void jButtonModifiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifiActionPerformed
         // Modificar datos de un pais
-        
         if (JtableTabla.getSelectedRow() != -1) {
-        jButtonCancelarPais.setEnabled(true);
-        jButtonGuardarPais.setEnabled(true);
-         } 
+            jButtonCancelarPais.setEnabled(true);
+            jButtonGuardarPais.setEnabled(true);
+            permitirEdicionFormulario(true);
+        } 
     }//GEN-LAST:event_jButtonModifiActionPerformed
 
     private void jButtonGuardarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarPaisActionPerformed
        // Añadimos un nuevo registro a la base de datos
        
-       if (jTextCodigo.getText().isEmpty() || jTextNombre.getText().isEmpty() || jComboContinente.getSelectedItem().toString().isEmpty() ||  jTextRegion.getText().isEmpty() || jTextNombreLocal.getText().isEmpty() || jTextAnyoIndependencia.getText().isEmpty() || 
-            jTextSuperficie.getText().isEmpty() || jTextExpVida.getText().isEmpty() || jTextHab.getText().isEmpty() || jTextPnb.getText().isEmpty() || jTextFormaGobierno.getText().isEmpty() || jTextCabezaEstado.getText().isEmpty() || 
-            jTextCapital.getText().isEmpty() || jTextDistrito.getText().isEmpty() || jTextHabcity.getText().isEmpty()) { 
-           JOptionPane.showMessageDialog(null, "Algun dato esta vacio");
+       if (JtableTabla.getSelectedRow() != -1) { 
+           
+           // Obtener los valores de los campos de texto y convertirlos a números si es necesario
+            String superficie = jTextSuperficie.getText().isEmpty() ? "0" : jTextSuperficie.getText();
+            String expVida = jTextExpVida.getText().isEmpty() ? "0" : jTextExpVida.getText();
+            String hab = jTextHab.getText().isEmpty() ? "0" : jTextHab.getText();
+            String pnb = jTextPnb.getText().isEmpty() ? "0" : jTextPnb.getText();
+            String habCity = jTextHabcity.getText().isEmpty() ? "0" : jTextHabcity.getText();
+            String anyoIndependencia = jTextAnyoIndependencia.getText().isEmpty() ? "0" : jTextAnyoIndependencia.getText();
+
+            // Crear la consulta de actualización para country usando los valores obtenidos
+            String updateCountryQuery = "UPDATE country SET Name = '" + jTextNombre.getText() + "', Continent = '" + jComboContinente.getSelectedItem().toString() + "', Region = '" + jTextRegion.getText() + "', LocalName = '" + jTextNombreLocal.getText() + "', IndepYear = " + anyoIndependencia + ", SurfaceArea = " + superficie + ", LifeExpectancy = " + expVida + ", Population = " + hab + ", GNP = " + pnb + ", GovernmentForm = '" + jTextFormaGobierno.getText() + "', HeadOfState = '" + jTextCabezaEstado.getText() + "' WHERE Code = '" + jTextCodigo.getText() + "'";
+            // Crear la consulta de actualización para city usando los valores obtenidos
+            String updateCityQuery = "UPDATE city SET Name = '" + jTextCapital.getText() + "', District = '" + jTextDistrito.getText() + "', Population = " + habCity + " WHERE CountryCode = '" + jTextCodigo.getText() + "'";
+
+           
+           try { 
+               System.out.println( Mysql.actualizarValores(updateCountryQuery)+updateCountryQuery);
+                System.out.println( Mysql.actualizarValores(updateCityQuery)+updateCityQuery); 
+           } catch (SQLException ex) {
+               Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+           }
+          
+           
+           JOptionPane.showMessageDialog(null, "Pais seleccionado actualizado");
+           cargarTabla();
+           jButtonCancelarPais.setEnabled(false);
+            jButtonGuardarPais.setEnabled(false);
+           permitirEdicionFormulario(false);
         } else {
             String consulta = "INSERT INTO country (Code, Name, Continent, Region, LocalName, IndepYear, SurfaceArea, LifeExpectancy, Population, GNP, GovernmentForm, HeadOfState) VALUES ('" + jTextCodigo.getText() + "', '" + jTextNombre.getText() + "', '" +
                             jComboContinente.getSelectedItem().toString() + "', '" + jTextRegion.getText() + "', '" + jTextNombreLocal.getText() + "', " + jTextAnyoIndependencia.getText() + ", " + jTextSuperficie.getText() + ", " + jTextExpVida.getText() + ", " +
@@ -818,46 +794,16 @@ public class Ventana extends javax.swing.JFrame {
            //indicamos por pantalla que se a completado 
            JOptionPane.showMessageDialog(null, "Se ha añadido nuevo registro");
           //una vez añadidos seteamos todo a blanco  
-            jTextCodigo.setText("");
-            jTextNombre.setText("");
-            jComboContinente.setSelectedItem("");
-            jTextRegion.setText("");
-            jTextNombreLocal.setText("");
-            jTextAnyoIndependencia.setText("");
-            jTextSuperficie.setText(""); 
-            jTextExpVida.setText("");
-            jTextHab.setText("");
-            jTextPnb.setText("");
-            jTextFormaGobierno.setText("");
-            jTextCabezaEstado.setText("");
-            jTextCapital.setText("");
-            jTextDistrito.setText("");
-            jTextHabcity.setText("");
-            
-            // seteamos todo a que no se pueda editar
-            jButtonCancelarPais.setEnabled(false);
-            jButtonGuardarPais.setEnabled(false);
-            jTextCodigo.setEnabled(false);
-            jTextNombre.setEnabled(false);
-            jComboContinente.setEnabled(false);
-            jTextRegion.setEnabled(false);
-            jTextNombreLocal.setEnabled(false);
-            jTextAnyoIndependencia.setEnabled(false);
-            jTextSuperficie.setEnabled(false);
-            jTextExpVida.setEnabled(false);
-            jTextHab.setEnabled(false);
-            jTextPnb.setEnabled(false);
-            jTextFormaGobierno.setEnabled(false);
-            jTextCabezaEstado.setEnabled(false);
-            jTextCapital.setEnabled(false);
-            jTextDistrito.setEnabled(false);
-            jTextHabcity.setEnabled(false);
-            
+           limpiarFormulario(true);
 
             
         }
        
     }//GEN-LAST:event_jButtonGuardarPaisActionPerformed
+
+    private void jButtonEliminarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarPaisActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonEliminarPaisActionPerformed
 
     public void cargarContinentes(){
     
@@ -895,6 +841,11 @@ public class Ventana extends javax.swing.JFrame {
     return resultados;
 }
     private void cargarTabla() {
+        
+        
+        
+        
+        
         
         jButtonAñadirIdioma.setEnabled(false);
         jButtonEliminarIdioma.setEnabled(false);
@@ -977,6 +928,48 @@ public class Ventana extends javax.swing.JFrame {
         }
         tablaMia2.setData(paisData, columnNames);
         jTableIdiomas.setModel(tablaMia2);
+    }
+    
+    private void limpiarFormulario(Boolean isEnabled){
+    
+        jTextCodigo.setText("");
+        jTextNombre.setText("");
+        jComboContinente.setSelectedItem("");
+        jTextRegion.setText("");
+        jTextNombreLocal.setText("");
+        jTextAnyoIndependencia.setText("");
+        jTextSuperficie.setText(""); 
+        jTextExpVida.setText("");
+        jTextHab.setText("");
+        jTextPnb.setText("");
+        jTextFormaGobierno.setText("");
+        jTextCabezaEstado.setText("");
+        jTextCapital.setText("");
+        jTextDistrito.setText("");
+         jTextHabcity.setText("");
+            
+        // seteamos todo a que no se pueda editar
+        permitirEdicionFormulario(isEnabled);
+    }
+    
+    private void permitirEdicionFormulario(Boolean isEnabled){
+        jButtonCancelarPais.setEnabled(isEnabled);
+        jButtonGuardarPais.setEnabled(isEnabled);
+        jTextCodigo.setEnabled(isEnabled);
+        jTextNombre.setEnabled(isEnabled);
+        jComboContinente.setEnabled(isEnabled);
+        jTextRegion.setEnabled(isEnabled);
+        jTextNombreLocal.setEnabled(isEnabled);
+        jTextAnyoIndependencia.setEnabled(isEnabled);
+        jTextSuperficie.setEnabled(isEnabled);
+        jTextExpVida.setEnabled(isEnabled);
+        jTextHab.setEnabled(isEnabled);
+        jTextPnb.setEnabled(isEnabled);
+        jTextFormaGobierno.setEnabled(isEnabled);
+        jTextCabezaEstado.setEnabled(isEnabled);
+        jTextCapital.setEnabled(isEnabled);
+        jTextDistrito.setEnabled(isEnabled);
+        jTextHabcity.setEnabled(isEnabled);
     }
     
     
