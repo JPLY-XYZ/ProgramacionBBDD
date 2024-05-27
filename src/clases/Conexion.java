@@ -1,5 +1,5 @@
 /*
-17.05.24. Clse Conexion con métodos
+ Clse Conexion con métodos un poco cambiados
 */
 package clases;
 

@@ -262,6 +262,7 @@ public class Ventana extends javax.swing.JFrame {
         jLabel20.setText("%:");
 
         jButtonAñadirPais.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/anadir.png"))); // NOI18N
+        jButtonAñadirPais.setEnabled(false);
         jButtonAñadirPais.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonAñadirPaisActionPerformed(evt);
@@ -277,6 +278,7 @@ public class Ventana extends javax.swing.JFrame {
         });
 
         jButtonEliminarPais.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/hoja-de-papel.png"))); // NOI18N
+        jButtonEliminarPais.setEnabled(false);
         jButtonEliminarPais.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonEliminarPaisActionPerformed(evt);
@@ -293,6 +295,11 @@ public class Ventana extends javax.swing.JFrame {
 
         jButtonCancelarPais.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interfaz/cruzar.png"))); // NOI18N
         jButtonCancelarPais.setEnabled(false);
+        jButtonCancelarPais.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCancelarPaisActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -301,9 +308,6 @@ public class Ventana extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(11, 11, 11)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -409,7 +413,10 @@ public class Ventana extends javax.swing.JFrame {
                         .addComponent(jButtonGuardarPais)
                         .addGap(15, 15, 15)
                         .addComponent(jButtonCancelarPais)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jScrollPane1))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -422,11 +429,11 @@ public class Ventana extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButtonAñadirPais)
                         .addComponent(jButtonModificarPais)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                        .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel9)
@@ -492,7 +499,7 @@ public class Ventana extends javax.swing.JFrame {
                                         .addGap(71, 71, 71)))))
                         .addGap(58, 58, 58))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
+                        .addGap(26, 26, 26)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -552,6 +559,9 @@ public class Ventana extends javax.swing.JFrame {
 
         //Se activa la modificacion del pais
         jButtonModificarPais.setEnabled(true);
+        jButtonEliminarPais.setEnabled(true);
+        jButtonAñadirPais.setEnabled(false);
+        jButtonCancelarPais.setEnabled(true);
         
         //Se inserta el valor de codigo del pais en la variable global isSelected para posteriormente
         idPaisSelected = JtableTabla.getModel().getValueAt(JtableTabla.getSelectedRow(),0);
@@ -577,8 +587,10 @@ public class Ventana extends javax.swing.JFrame {
                 System.out.println(ex);
             }   
        
-         //Se ejecuta una consulta la cual devuelve todos los datos necesarios para cargar la consulta actual en el formulario de la izquierda   
-        Mysql.ejecutarConsulta("SELECT country.LifeExpectancy, country.Population, country.GNP, country.GovernmentForm, country.HeadOfState, city.Name, city.District, city.Population FROM country JOIN city ON country.Capital = city.ID WHERE country.Code = '" + JtableTabla.getModel().getValueAt(JtableTabla.getSelectedRow(),0)+"'");
+         //Se ejecuta una consulta la cual devuelve todos los datos necesarios para cargar la consulta actual en el formulario de la izquierda  
+         
+         System.out.println("cargando 2a parte de la tabla");
+        Mysql.ejecutarConsulta("SELECT country.LifeExpectancy, country.Population, country.GNP, country.GovernmentForm, country.HeadOfState, city.Name, city.District, city.Population from country, city where country.Code = '"+idPaisSelected+"' and city.countrycode = '" + idPaisSelected+"'");
         //Se guarda el resultado de la consulta en un resultset
         ResultSet datos2 = Mysql.getResultSet();
             try { 
@@ -769,47 +781,89 @@ public class Ventana extends javax.swing.JFrame {
            JOptionPane.showMessageDialog(null, "Pais seleccionado actualizado");
            cargarTabla();
            jButtonCancelarPais.setEnabled(false);
-            jButtonGuardarPais.setEnabled(false);
+           jButtonGuardarPais.setEnabled(false);
            permitirEdicionFormulario(false);
         } else {
            
-            String consulta = "INSERT INTO country (Code, Name, Continent, Region, LocalName, IndepYear, SurfaceArea, LifeExpectancy, Population, GNP, GovernmentForm, HeadOfState) VALUES ('" + jTextCodigo.getText() + "', '" + jTextNombre.getText() + "', '" +
-                            jComboContinente.getSelectedItem().toString() + "', '" + jTextRegion.getText() + "', '" + jTextNombreLocal.getText() + "', " + jTextAnyoIndependencia.getText() + ", " + jTextSuperficie.getText() + ", " + jTextExpVida.getText() + ", " +
-                            jTextHab.getText() + ", " + jTextPnb.getText() + ", '" + jTextFormaGobierno.getText() + "', '" + jTextCabezaEstado.getText() + "')";
-            String consulta2 = "INSERT INTO city (Name, District, Population, CountryCode) VALUES ('" + jTextCapital.getText() + "', '" + jTextDistrito.getText() + "', '" + jTextHabcity.getText() + "', '"+ jTextCodigo.getText()+ "')";
-            System.out.println(consulta + consulta2);
-         
-           try {
-               System.out.println(Mysql.insertarRegistro(consulta));
-               System.out.println(Mysql.insertarRegistro(consulta2));
-               cargarTabla();
-           } catch (SQLException ex) {
-               Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
-           }
-               
-          
-           
-           //indicamos por pantalla que se a completado 
-           JOptionPane.showMessageDialog(null, "Se ha añadido nuevo registro");
-          //una vez añadidos seteamos todo a blanco  
-           limpiarFormulario(true);
+               //Se hace una consulta en la base de datos buscando por codigo de pais
+               Mysql.ejecutarConsulta("select * from country where Code = '"+jTextCodigo.getText()+"'" );
+               List<Object[]> listaEncontrada =  convertirResultSetALista(Mysql.getResultSet());
+           if (listaEncontrada.size() == 0) {
+               //Si no encuentra nada inserta el nuevo pais
+                String consulta = "INSERT INTO country (Code, Name, Continent, Region, LocalName, IndepYear, SurfaceArea, LifeExpectancy, Population, GNP, GovernmentForm, HeadOfState) VALUES ('" + jTextCodigo.getText() + "', '" + jTextNombre.getText() + "', '" + jComboContinente.getSelectedItem().toString() + "', '" + jTextRegion.getText() + "', '" + jTextNombreLocal.getText() + "', " + jTextAnyoIndependencia.getText() + ", " + jTextSuperficie.getText() + ", " + jTextExpVida.getText() + ", " + jTextHab.getText() + ", " + jTextPnb.getText() + ", '" + jTextFormaGobierno.getText() + "', '" + jTextCabezaEstado.getText() + "')";
+                String consulta2 = "INSERT INTO city (Name, District, Population, CountryCode) VALUES ('" + jTextCapital.getText() + "', '" + jTextDistrito.getText() + "', '" + jTextHabcity.getText() + "', '"+ jTextCodigo.getText()+ "')";
+                System.out.println(consulta + consulta2);
+               try {
+                    boolean tick0 = Mysql.insertarRegistro(consulta);
+                    boolean tick1 = Mysql.insertarRegistro(consulta2);
+                    if (tick1 || tick0) {
+                        JOptionPane.showMessageDialog(null, "Se ha añadido nuevo registro");
+                        //una vez añadidos seteamos todo a blanco  
+                        limpiarFormulario(false);
+                        jButtonCancelarPais.setEnabled(false);
+                        jButtonGuardarPais.setEnabled(false);
 
-            
+                   }else{
+                        //si no se inserta muestra un mensaje por pantalla de ha ocurrido un fallo en la insercion
+                        JOptionPane.showMessageDialog(null, "No se a añadido ningun registro");
+                   }
+               } catch (SQLException ex) {
+                   //si no se inserta muestra un mensaje por pantalla de que falta algo
+                   JOptionPane.showMessageDialog(null, "No se a añadido ningun registro ya que algun campo esta vacio");
+               }
+           } else {
+               //si no se inserta muestra un mensaje por pantalla de que el codigo de pais ya exixte
+           JOptionPane.showMessageDialog(null, "No se a añadido ningun registro ya que el id ya esta en la base de datos");
+           }   
         }
-       
+        //una vez ejecutado todo lo anterior recargamos la tabla
+        cargarTabla();
     }//GEN-LAST:event_jButtonGuardarPaisActionPerformed
 
     private void jButtonEliminarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarPaisActionPerformed
-        // TODO add your handling code here:
+       
+        if (JtableTabla.getSelectedRow() != -1) {
+            // Eliminar un idioma de la base de datos si esta seleccionado en la tabla
+            String deleteQuery1 ="delete from city where CountryCode = '" +idPaisSelected+"'";
+            String deleteQuery2 = "delete from countrylanguage where CountryCode  = '"+idPaisSelected+"'";
+            String deleteQuery ="DELETE FROM country WHERE code = '"+idPaisSelected+"'";
+            try {
+                //Se ejecutan las querys y se muestran por pantalla un aviso en caso de fallo de insercion.
+                boolean tick = Mysql.eliminarRegistros(deleteQuery1);
+                boolean tick1 = Mysql.eliminarRegistros(deleteQuery2);
+                boolean tick2 = Mysql.eliminarRegistros(deleteQuery);
+                if (tick || tick1 || tick2) {
+                    JOptionPane.showMessageDialog(null, "Pais eliminado correctamente");
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se ha podido eliminar el pais", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                //Se recarga la tabla para representar los cambios y se desabilitan modificar y eliminar 
+                cargarTabla();
+                limpiarFormulario(false);
+                jButtonModificarPais.setEnabled(false);
+                jButtonEliminarPais.setEnabled(false);
+            } catch (SQLException ex) {
+                    Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_jButtonEliminarPaisActionPerformed
 
+    private void jButtonCancelarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarPaisActionPerformed
+       cargarTabla();
+       
+    }//GEN-LAST:event_jButtonCancelarPaisActionPerformed
+
     public void cargarContinentes(){
-    
-         jComboContinente.removeAllItems();
+        //Metodo que carga la lista de continentes en el combo hacidno una consulta en la base de datos
+        //Limpiamos la lista para que no se sobepongan los paises
+        jComboContinente.removeAllItems();
+        //Se buscan en la base de datos los continentes para que no se repitan
         Mysql.ejecutarConsulta("SELECT distinct continent FROM country");
          ResultSet resultSet = Mysql.getResultSet();
          
             try {
+                //Por cada uno encontrado se añade al combo
+                
                 while (resultSet.next()) {
                    jComboContinente.addItem(resultSet.getString(1));
                 }   } catch (SQLException ex) {
@@ -824,41 +878,49 @@ public class Ventana extends javax.swing.JFrame {
         Mysql.cierraConexion(); 
     }
     private List<Object[]> convertirResultSetALista(ResultSet rs) {
-    List<Object[]> resultados = new ArrayList<>();
-    try {
-        while (rs.next()) {
-            Object[] row = new Object[rs.getMetaData().getColumnCount()];
-            for (int i = 0; i < row.length; i++) {
-                row[i] = rs.getObject(i + 1);
+        //metodo que encontre en internet que combierte de resulset a una lista de objetos
+        List<Object[]> resultados = new ArrayList<>();
+        try {
+            while (rs.next()) {
+                Object[] row = new Object[rs.getMetaData().getColumnCount()];
+                for (int i = 0; i < row.length; i++) {
+                    row[i] = rs.getObject(i + 1);
+                }
+                resultados.add(row);
             }
-            resultados.add(row);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return resultados;
+        return resultados;
 }
     private void cargarTabla() {
+        //se deshabilitan los botones y la tabla de idioma mientras se carga la tabla principal
         
-        
-        
-        
-        
-        
+        System.out.println("Cargando tabla idiomas total");
         jButtonAñadirIdioma.setEnabled(false);
         jButtonEliminarIdioma.setEnabled(false);
-        jTableIdiomas.setEnabled(false);
+        jButtonModificarPais.setEnabled(false);
+        jButtonEliminarPais.setEnabled(false);
+        jButtonCancelarPais.setEnabled(false);
+        jButtonGuardarPais.setEnabled(false);
+        jButtonAñadirPais.setEnabled(true);
+        limpiarFormulario(false);
+        limpiarTablaIdiomas();
         
+        // se ejecuta una consulta SQL para obtener los datos de los pais
         try {
             Mysql.ejecutarConsulta("SELECT COUNTRY.CODE, COUNTRY.NAME, COUNTRY.CONTINENT, COUNTRY.REGION FROM COUNTRY");
-             List<Object[]> resultados = convertirResultSetALista(Mysql.getResultSet());
-
+             // se convierte el ResultSet a una lista de arrays de objetos
+            List<Object[]> resultados = convertirResultSetALista(Mysql.getResultSet());
             if (!resultados.isEmpty()) {
+            // creamos un modeo personalizado para la tabla
                 ModeloTabla tablaMia = new ModeloTabla();
                 int numPaises = resultados.size();
                 System.out.println(numPaises);
+                //se inicializan para almacenar los datos de los paises y se le añade los campos de la tabla donde se indican los
                 String[][] paisData = new String[numPaises][4];
                 String[] columnNames = {"Código", "Nombre", "Continente", "Región"}; 
+                //se recorre una lista de resultados y se almacenan los paises y se asigna a cada uno
                 for (int i = 0; i < numPaises; i++) {
                     Object[] pais = resultados.get(i);
                     paisData[i][0] = (String) pais[0];
@@ -866,70 +928,93 @@ public class Ventana extends javax.swing.JFrame {
                     paisData[i][2] = (String) pais[2];
                     paisData[i][3] = (String) pais[3];
                 }
-                tablaMia.setData(paisData, columnNames); 
+                //se establecen los datos y los nombres de la columna al modelo
+                tablaMia.setData(paisData, columnNames);    
+                //se setea el modelo en la jtable
                 JtableTabla.setModel(tablaMia);
-               }
-        } 
-        catch (java.lang.NullPointerException e) {
+            }
+        } catch (java.lang.NullPointerException e) {
             System.out.println(e);
         }
     }
     private void cargarTablaLenguas(Object idPais) {
+        //muestra un mensaje indicando que se cargando la tabla un pais especifico
         System.out.println("Cargando tabla Lenguas del pais con id: " + idPais);
-            
+        //verifica si el ID de pais es nulo
         if (idPais == null) {
+        //si el ID del pais es nulo , se limpia la tabla de idiomas
             limpiarTablaIdiomas();            
         }   else{
+        //si el ID de pais no es nulo, se habilita estos botones
             //seteamos el poder seleccionar de la tabla editar y añadir
             jButtonAñadirIdioma.setEnabled(true);
             jButtonEliminarIdioma.setEnabled(true);
             jTableIdiomas.setEnabled(true);
             try {
+                //se ejecuta la consulta SQL para obtener los datos
                 Mysql.ejecutarConsulta("SELECT Language, isOfficial, Percentage FROM countrylanguage WHERE CountryCode like '"+idPais+"'");
+               //se convierte el resultado de la consulta a una lista de objetos
                 List<Object[]> resultadoConsultaIdiomas = convertirResultSetALista(Mysql.getResultSet());
+               //si no hay idiomas disponibles, se cargan en la tabla
                 if (!resultadoConsultaIdiomas.isEmpty()) {
+                    //Si hay algun idioma en la lista se cargara
                     cargarListaIdiomas(resultadoConsultaIdiomas);
                 } else{
-                limpiarTablaIdiomas();
-                jButtonAñadirIdioma.setEnabled(true);
+                    //sino hay datos de idiomas disponibles , se limpia la tabla y se activa solo el boton añadir
+                    limpiarTablaIdiomas();
+                    jButtonAñadirIdioma.setEnabled(true);
                 }
-               
             } catch (java.lang.NullPointerException e) {
                 System.out.println(e);
             }
         } 
-}
+    }
     private void limpiarTablaIdiomas(){
+        //se muestra un mensaje
         System.out.println("No se esta cargando nada en la tabla");
+        //deshabilitar los botones añadir, eliminacion y la tabla de idiomas
         jButtonAñadirIdioma.setEnabled(false);
         jButtonEliminarIdioma.setEnabled(false);
         jTableIdiomas.setEnabled(false);
+        //se crea un modelo de tabla vacio
         ModeloTabla tablaVacia = new ModeloTabla();
+        //se inicializa una matriz vacia para almacenar datos
         String[][] paisData = new String[3][3];
+        //se define los nombres de las columnas
         String[] columnNames = {"LENGUA", "OFICIAL", "%"};
+        //se establecen datos vacios en la primera fila de la tabla
         paisData[0][0] = "";  
+        //se establecen datos vacios en la primera fila de la tabla 
         tablaVacia.setData(paisData, columnNames);
+        //se establece el modelo vacio en la tabla de idiomas
         jTableIdiomas.setModel(tablaVacia);
     }
+
     private void cargarListaIdiomas(List<Object[]> resultados){
+        //se crea un nuevo modelo de tabla para almacenar los datos de la tabla idiomas
         ModeloTabla tablaMia2 = new ModeloTabla();
+        //se crea un numero para el registro de idiomas
         int numLenguas = resultados.size();
+        //se muestra los numeros que se van a registrar       
         System.out.println("Se van a cargar: " +numLenguas+ " Registros");
+        //se inicializa una matriz para almacenar los datos de idiomas y se define los nombres de la columnas
         String[][] paisData = new String[numLenguas][3];
         String[] columnNames = {"LENGUA", "OFICIAL", "%"};
         //Se hace un bucle por cada registro encontrado y se añade al modelo
-        for (int i = 0; i < numLenguas; i++) {
+   for (int i = 0; i < numLenguas; i++) {
             Object[] paisidiomas = resultados.get(i);
             paisData[i][0] = paisidiomas[0].toString();
             paisData[i][1] = paisidiomas[1].toString();
             paisData[i][2] = paisidiomas[2] .toString();
         }
+        //se establecen los datos y los nombres de la columnas en el modelo de la tabla de idiomas
         tablaMia2.setData(paisData, columnNames);
+        //se establece el modelo de tabla de idiomas en la Jtable
         jTableIdiomas.setModel(tablaMia2);
     }
     
     private void limpiarFormulario(Boolean isEnabled){
-    
+        //metodo que setea el texto de todos los datos del formulario vacio
         jTextCodigo.setText("");
         jTextNombre.setText("");
         jComboContinente.setSelectedItem("");
@@ -946,11 +1031,12 @@ public class Ventana extends javax.swing.JFrame {
         jTextDistrito.setText("");
          jTextHabcity.setText("");
             
-        // seteamos todo a que no se pueda editar
+        // seteamos todo a que no se pueda editar dependiendo del valor introduccido por parametro
         permitirEdicionFormulario(isEnabled);
     }
     
     private void permitirEdicionFormulario(Boolean isEnabled){
+        //Se habilita el formulario dependiendo de lo introduccido por parametro
         jButtonCancelarPais.setEnabled(isEnabled);
         jButtonGuardarPais.setEnabled(isEnabled);
         jTextCodigo.setEnabled(isEnabled);
