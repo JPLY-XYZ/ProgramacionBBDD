@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.JTableHeader;
 
 
 
@@ -26,7 +27,7 @@ public class Ventana extends javax.swing.JFrame {
         setLocationRelativeTo(null);  
         setTitle("Paises, capitales y leguas");
         conectaMysql();
-        cargarTabla();
+        cargarTabla("code", "asc");
         jButtonAceptarIdioma.setEnabled(false);
         jButtonCancelarIdioma.setEnabled(false);
         //JtableTabla.setDefaultRenderer(columnClass, renderer); cambiar el color de la tabla
@@ -556,7 +557,9 @@ public class Ventana extends javax.swing.JFrame {
 
     private void JtableTablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableTablaMouseClicked
         // Al pulsar sobre uno de la tabla
-
+        
+        
+        
         //Se activa la modificacion del pais
         jButtonModificarPais.setEnabled(true);
         jButtonEliminarPais.setEnabled(true);
@@ -721,7 +724,7 @@ public class Ventana extends javax.swing.JFrame {
     private void jButtonAñadirPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirPaisActionPerformed
         // Añadir nuevo Pais
         //activamos la edicion en la parte de los datos
-        cargarTabla();
+        cargarTabla("code", "asc");
         jButtonCancelarPais.setEnabled(true);
         jButtonGuardarPais.setEnabled(true);
         limpiarFormulario(true);
@@ -779,7 +782,7 @@ public class Ventana extends javax.swing.JFrame {
           
            //Una vez que se actualiza muestra un mensaje por pantalla y carga la tabla de paises ademas de activar botones guardar y cancelar y permitir edicion del formulario 
            JOptionPane.showMessageDialog(null, "Pais seleccionado actualizado");
-           cargarTabla();
+           cargarTabla("code", "asc");
            jButtonCancelarPais.setEnabled(false);
            jButtonGuardarPais.setEnabled(false);
            permitirEdicionFormulario(false);
@@ -817,7 +820,7 @@ public class Ventana extends javax.swing.JFrame {
            }   
         }
         //una vez ejecutado todo lo anterior recargamos la tabla
-        cargarTabla();
+        cargarTabla("code", "asc");
     }//GEN-LAST:event_jButtonGuardarPaisActionPerformed
 
     private void jButtonEliminarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarPaisActionPerformed
@@ -838,7 +841,7 @@ public class Ventana extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "No se ha podido eliminar el pais", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 //Se recarga la tabla para representar los cambios y se desabilitan modificar y eliminar 
-                cargarTabla();
+                cargarTabla("code", "asc");
                 limpiarFormulario(false);
                 jButtonModificarPais.setEnabled(false);
                 jButtonEliminarPais.setEnabled(false);
@@ -849,7 +852,7 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonEliminarPaisActionPerformed
 
     private void jButtonCancelarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarPaisActionPerformed
-       cargarTabla();
+       cargarTabla("code", "asc");
        
     }//GEN-LAST:event_jButtonCancelarPaisActionPerformed
 
@@ -871,12 +874,15 @@ public class Ventana extends javax.swing.JFrame {
             }
     
     }
+    
     private void conectaMysql(){
         Mysql = new Conexion("com.mysql.cj.jdbc.Driver","mysql","localhost", "3306","world", "root", "inca.2024");
    }
+    
     private void desconectaMysql(){
         Mysql.cierraConexion(); 
     }
+    
     private List<Object[]> convertirResultSetALista(ResultSet rs) {
         //metodo que encontre en internet que combierte de resulset a una lista de objetos
         List<Object[]> resultados = new ArrayList<>();
@@ -893,7 +899,8 @@ public class Ventana extends javax.swing.JFrame {
         }
         return resultados;
 }
-    private void cargarTabla() {
+    
+    private void cargarTabla(String orderByString, String tipo) {
         //se deshabilitan los botones y la tabla de idioma mientras se carga la tabla principal
         
         System.out.println("Cargando tabla idiomas total");
@@ -909,7 +916,7 @@ public class Ventana extends javax.swing.JFrame {
         
         // se ejecuta una consulta SQL para obtener los datos de los pais
         try {
-            Mysql.ejecutarConsulta("SELECT COUNTRY.CODE, COUNTRY.NAME, COUNTRY.CONTINENT, COUNTRY.REGION FROM COUNTRY");
+            Mysql.ejecutarConsulta("SELECT COUNTRY.CODE, COUNTRY.NAME, COUNTRY.CONTINENT, COUNTRY.REGION FROM COUNTRY order by "+orderByString+" "+tipo);
              // se convierte el ResultSet a una lista de arrays de objetos
             List<Object[]> resultados = convertirResultSetALista(Mysql.getResultSet());
             if (!resultados.isEmpty()) {
@@ -937,6 +944,7 @@ public class Ventana extends javax.swing.JFrame {
             System.out.println(e);
         }
     }
+    
     private void cargarTablaLenguas(Object idPais) {
         //muestra un mensaje indicando que se cargando la tabla un pais especifico
         System.out.println("Cargando tabla Lenguas del pais con id: " + idPais);
@@ -969,6 +977,7 @@ public class Ventana extends javax.swing.JFrame {
             }
         } 
     }
+    
     private void limpiarTablaIdiomas(){
         //se muestra un mensaje
         System.out.println("No se esta cargando nada en la tabla");
